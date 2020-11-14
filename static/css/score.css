@@ -1,0 +1,26 @@
+.post-score {
+    display: flex;
+    align-items: center;
+    width: 50px;
+    height: 50px;
+    padding: 0;
+    background-color: #5199d8;
+    color: #ffffff;
+    border-radius: 5px;
+    margin: 0;
+}
+
+.post-score h4 {
+    width: 100%;
+    margin: 0;
+    text-align: center;
+}
+
+.scores {
+    width: inherit;
+    padding: 0 1em 0 1em;
+    margin: 1em 0 1em 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

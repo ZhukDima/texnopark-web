@@ -1,0 +1,17 @@
+<!-- Sidebar -->
+<div class="sidebar">
+    <h3 class="text-center">Popular Tags</h3>
+    <hr>
+    <ul>
+        {% for t in all_tags %}
+        <li><a href="{% url 'tag' t %}" class="sidebar-link">{{ t }}</a></li>
+        {% endfor %}
+    </ul>
+    <h3 class="text-center">Best Members</h3>
+    <hr>
+    <ul>
+        {% for m in all_members %}
+        <li><a href="#" class="sidebar-link">{{ m }}</a></li>
+        {% endfor %}
+    </ul>
+</div>

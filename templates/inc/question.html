@@ -1,0 +1,60 @@
+{% load static %}
+<div class="card mb-3 question">
+    <div class="row no-gutters">
+        <div class="col-md-4">
+            <img src="{% static 'img/avatar.jpg' %}" class="card-img" alt="...">
+            <div class="row scores">
+
+                <div class="post-score align-self-center">
+                    <h4>{{ q.score }}</h4>
+                </div>
+                <form action="#" method="POST">
+                    <div class="d-flex flex-row justify-content-center answer-score">
+                        <div class="btn-group mt-1 ml-1 d-flex align-self-center" role="group"
+                            aria-label="Basic example">
+                            <button type="button" class="btn btn-info">
+                                <img width="15px" height="15px" src="{% static 'img/like_up.png' %}" />
+                            </button>
+                            <button type="button" class="btn btn-danger">
+                                <img width="15px" height="15px" src="{% static 'img/like_down.png' %}" />
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+        <div class="col">
+            <div class="card-body">
+                <a href="{% url 'answers' q.id %}">
+                    <h5 class="card-title">{{ q.title }}</h5>
+                </a>
+                <p class="card-text question-text">
+                    {{ q.text }}
+                </p>
+                <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+            </div>
+
+            <div class="row d-flex flex-row justify-content-around px-3 px-md-5 pb-3">
+                <div class="col ans-link">
+                    <a href="{% url 'answers' q.id %}" class="btn btn-outline-success">
+                        Answer (5)
+                    </a>
+                </div>
+                <div class="col d-flex flex-row">
+                    <div class="row">
+                        <div class="col">
+                            <h5 class="mx-auto">Tags:</h5>
+                        </div>
+                        <div class="col d-flex flex-column flex-md-row">
+                            {% for t in q.tags %}
+                            <a class="mx-2" href="{% url 'tag' t %}">{{ t }}</a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,17 @@
+.bg-error {
+    background-color: rgba(235, 125, 125, 0.597);
+    border: rgb(175, 2, 2) solid 1px;
+    border-radius: 10px;
+}
+
+.bg-error ul {
+    list-style-type: none;
+}
+
+.jumbotron {
+    padding: 1.25em;
+}
+
+.jumbotron p {
+    font-size: 1.5em;
+}

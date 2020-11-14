@@ -1,0 +1,42 @@
+<nav class="navbar navbar-expand-md navbar-dark bg-info">
+    <a class="navbar-brand mb-0 h1" href="{% url 'home' %}">AskZhuk
+
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
+        aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <form class="form-inline mt-2 mt-md-0">
+                    <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+                    
+                </form>
+            </li>
+            <li class="nav-item mr-4">
+                <a href="{% url 'ask' %}" class="btn btn-success">ASK!</a>
+            </li>
+            
+
+
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                    User
+                </a>
+                <div class="dropdown-menu bg-info" aria-labelledby="navbarDropdown">
+                    {% if True %}
+                    <a class="dropdown-item" href="{% url 'settings' %}">Settings</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="#">Log Out</a>
+                    {% else %}
+                    <a class="dropdown-item" href="{% url 'login' %}">Login</a>
+                    {% endif %}
+                </div>
+            </li>
+
+        </ul>
+    </div>
+</nav>

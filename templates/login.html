@@ -1,0 +1,43 @@
+{% extends 'inc/base.html' %}
+
+{% load static %}
+
+{% block page_title %}
+Login
+{% endblock page_title %}
+
+{% block custom_css %}
+<!-- Custom styles for this template -->
+<link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% endblock custom_css %}
+
+{% block content %}
+<h3 class="mt-3">Log In</h3>
+<!-- Errors start -->
+<div class="jumbotron jumbotron-fluid bg-error">
+    <div class="container">
+        <ul>
+            {% for e in errors %}
+            <li>
+                <p class="text-center">{{ e }}</p>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+<!-- Errors ends -->
+<form method="POST" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="login">Login</label>
+        <input type="text" class="form-control" id="login" name="login" placeholder="Login">
+    </div>
+    <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" class="form-control" name="password" id="password" placeholder="Password">
+    </div>
+    <button type="submit" class="btn btn-success">Login</button>
+</form>
+<div class="text-center w-100 mt-5">
+    <a href="{% url 'register' %}">create new account</a>
+</div>
+{% endblock content %}

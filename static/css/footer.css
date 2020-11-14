@@ -1,0 +1,8 @@
+.footer {
+    background-color: #343A40;
+  }
+  
+  .footer > .container {
+    padding-right: 15px;
+    padding-left: 15px;
+  }

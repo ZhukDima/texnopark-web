@@ -1,0 +1,28 @@
+{% extends 'inc/base.html' %}
+
+{% load static %}
+
+{% block page_title %}
+Tag #Django
+{% endblock page_title %}
+
+{% block custom_css %}
+<!-- Custom styles for this template -->
+<link rel="stylesheet" href="{% static 'css/tag_answers.css' %}">
+<link rel="stylesheet" href="{% static 'css/question_list.css' %}">
+<link rel="stylesheet" href="{% static 'css/score.css' %}">
+{% endblock custom_css %}
+
+{% block content %}
+<div class="container text-center mt-3">
+  <h1>#{{ tag }}</h1>
+</div>
+
+<div class="questions">
+
+  {% for q in page_obj %}
+  {% include "inc/question.html" with q=q %}
+  {% endfor %}
+</div>
+{% include 'inc/pagination.html' %}
+{% endblock content %}

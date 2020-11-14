@@ -1,0 +1,47 @@
+<!-- Pagination -->
+{% if page_obj.paginator.num_pages > 1 %}
+
+<nav aria-label="...">
+    <ul class="pagination">
+        <!-- First Page -->
+        {% if page_obj.number != 1 %}
+        <li class="page-item">
+            <a href="?page=1" class="page-link">First</a>
+        </li>
+        {% endif %}
+        <!-- Previous Page -->
+        {% if page_obj.has_previous %}
+        <li class="page-item ">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}" tabindex="-1"
+                aria-disabled="true">Previous</a>
+        </li>
+        {% endif %}
+
+        <!-- Pages -->
+        {% for i in page_obj.paginator.page_range %}
+
+        {% if i >= page_obj.number and i < max_range %}
+        <li class="page-item {% if i == page_obj.number %}active{% endif %}"><a class="page-link"
+                href="?page={{ i }}">{{ i }}</a>
+        </li>
+        {% endif %}
+
+        {% endfor %}
+
+        <!-- Next Page -->
+        {% if page_obj.has_next %}
+        <li class="page-item disabled"><a class="page-link disabled" href="#">...</a></li>
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+        </li>
+
+        <!-- Last Page -->
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+        </li>
+        {% endif %}
+
+    </ul>
+</nav>
+
+{% endif %}

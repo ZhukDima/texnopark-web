@@ -1,0 +1,8 @@
+.question {
+    padding: 1em;
+    margin-top: 3em;
+}
+
+#question-body {
+    width: 100%;
+}

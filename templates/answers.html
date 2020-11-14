@@ -1,0 +1,74 @@
+{% extends 'inc/base.html' %}
+
+{% load static %}
+
+{% block page_title %}
+Answers
+{% endblock page_title %}
+
+{% block custom_css %}
+<!-- Custom styles for this template -->
+<link rel="stylesheet" href="{% static 'css/answers.css' %}">
+<link rel="stylesheet" href="{% static 'css/score.css' %}">
+{% endblock custom_css %}
+
+{% block content %}
+<div class="question">
+    <div class="jumbotron">
+        <div class="row">
+            <div class="col-md-4 d-flex flex-column">
+                <img class="avatar d-block" src="{% static 'img/avatar.jpg' %}" alt="#">
+
+                <div class="d-flex flex-row justify-content-around w-50 w-md-100 align-self-center mt-4">
+
+                    <div class="question-score align-self-center">
+                        <h4>{{ question.score }}</h4>
+                    </div>
+                    <form action="#" method="post">
+                        <div class="btn-group-vertical" role="group">
+                            <button type="button" class="btn btn-info">
+                                <img width="23px" height="23px" src="{% static 'img/arrow_up.png' %}" />
+                            </button>
+                            <button type="button" class="btn btn-danger">
+                                <img width="23px" height="23px" src="{% static 'img/arrow_down.png' %}" />
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+
+            </div>
+            <div class="col-md-8">
+                <h1 class="display-4">{{ question.title }}</h1>
+                <p class="lead">{{ question.text }}</p>
+                <hr class="my-4">
+                <div class="row d-flex flex-row mb-3">
+                    <div class="col-md-2">
+                        <h5 class="mx-2">Tags:</h5>
+                    </div>
+                    <div class="col-md-10 d-flex flex-column flex-md-row justify-content-start">
+                        {% for t in question.tags %}
+                        <a class="mx-1" href="{% url 'tag' t %}">{{ t }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <form action="#" method="post">
+            <div class="form-group">
+                <label for="question-body">Your Answer</label>
+                <textarea class="form-control" name="question-body" id="question-body" rows="10"
+                    placeholder="Enter your answer here..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Answer</button>
+        </form>
+    </div>
+</div>
+
+<!-- Answers -->
+{% include 'inc/_answers.html' with page_obj=page_obj %}
+{% endblock content %}
+
+{% block pagination %}
+{% include 'inc/pagination.html' %}
+{% endblock pagination %}
