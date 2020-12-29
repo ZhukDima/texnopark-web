@@ -1,45 +1,21 @@
-from django.shortcuts import render
-from django.http import HttpResponse
+from django.shortcuts import render, get_object_or_404, redirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.template import RequestContext, Template
 from django.core.paginator import Paginator
 from django.views.generic import ListView
 from django.views.decorators.http import require_GET, require_POST
 from django.http import Http404
+from django.core.files.storage import FileSystemStorage
+from django.views import View
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Sum
 
-questions = [
-    {
-        'id': idx,
-        'title': f'Question about Pascal {idx}',
-        'text': 'Mr and Mrs Dursley, of number four, Privet Drive, were proud to say that they were perfectly normal, thank you very much. They were the last people youd expect to be involved in anything strange or mysterious, because they just didnt hold with such nonsense.',
-        'score': f'{idx}',
-        'tags': ['Pascal', 'C'],
-    } for idx in range(0, 100)
-]
+from django.contrib import auth
+from django.urls import reverse
+from django.contrib.auth.decorators import login_required
+from .forms import QuestionForm, AnswerForm, LoginForm, RegistrationForm, UserSettingsForm, ProfileSettingsForm
 
-tags = [
-    'Pascal',
-    'Python',
-    'MySQL',
-    'Mailru',
-    'Texnopark',
-    'C',
-]
-
-members = [
-    'Agent_FSB_1',
-    'Agent_FSB_2',
-    'Agent_FSB_3',
-    'Agent_GOS_DEP_1',
-    'Agent_GOS_DEP_2',
-    'Agent_GOS_DEP_3',
-]
-
-# GLOBAL CONTEXT STARTS
-context = {}
-context['all_tags'] = tags
-context['all_members'] = members
-# GLOBAL CONTEXT ENDS
-
-# Paginate starts
+from .models import Profile, Question, Answer, Tag, QuestionVote, AnswerVote
 
 
 def paginate(request, per_page, model_list):
@@ -55,78 +31,146 @@ def paginate(request, per_page, model_list):
         "max_range": max_range,
     }
     return context
-# Paginate ends
-
-# Infinite Scroll Paginate starts
-# Infinite Scroll Paginate ends
 
 
 def index(request):
     # Index page
-    context.update(paginate(request, 5, questions))
+    questions = Question.objects.new()
+    context = paginate(request, 5, questions)
     return render(request, 'index.html', context)
 
 
+@login_required
 def ask_question(request):
     # Page for create new Question
-    return render(request, 'create_question.html', context)
+    if request.method == 'GET':
+        form = QuestionForm()
+    else:
+        form = QuestionForm(data=request.POST, request=request)
+        if form.is_valid():
+            question = form.save()
+            return redirect(reverse('answers', kwargs={'question_id': question.pk}))
+    return render(request, 'create_question.html', {'form': form})
 
 
-q_answers = [
-    {
-        'q_id': idx,
-        'score': f'{idx}',
-        'author': 'SkalikS',
-        'text': 'Mr and Mrs Dursley, of number four, Privet Drive, were proud to say that they were perfectly normal, thank you very much. They were the last people youd expect to be involved in anything strange or mysterious, because they just didnt hold with such nonsense.',
-    } for idx in range(0, 14)
-]
-
-def answers(request, id):
+def answers(request, question_id):
     # Page with answers on current question
-    question = questions[id]
+    question = Question.objects.find_by_id(question_id)
+    q_answers = Answer.objects.most_popular(question)
+    context = paginate(request, 5, q_answers)
     context['question'] = question
-
-    per_page = 5
-    context.update(paginate(request, per_page, q_answers))
-
+    if request.method == 'GET':
+        form = AnswerForm()
+    else:
+        if request.user.is_authenticated:
+            form = AnswerForm(data=request.POST,
+                              request=request, question_id=question_id)
+            if form.is_valid():
+                answer = form.save()
+                return redirect(reverse('answers', kwargs={'question_id': question_id}) + f'#{answer.pk}')
+        else:
+            return redirect(reverse('login') + f'?next={request.path}')
+    context['form'] = form
     return render(request, 'answers.html', context)
 
 
 def tag_questions(request, tag):
     # Page with question on one tag
-    tag_qs = []
-    for q in questions:
-        if tag in q['tags']:
-            tag_qs.append(q)
+    cur_tag = Tag.objects.filter(tag=tag).first()
+    if not cur_tag:
+        raise Http404
+    tag_qs = Question.objects.find_by_tag(tag)
 
-    context.update(paginate(request, 5, tag_qs))
+    context = paginate(request, 5, tag_qs)
     context['tag'] = f'{tag}'
 
     return render(request, 'tag_questions.html', context)
 
 
-user = {
-    'login': 'ZhukDima',
-    'email': 'zhukdo@gmail.com',
-    'nickname': 'SkalikS',
-}
-
-
+@login_required
 def settings(request):
-    # Page with user's settings
-    context['user'] = user
+    if request.method == 'GET':
+        user_form = UserSettingsForm(instance=request.user)
+        profile_form = ProfileSettingsForm(instance=request.user.profile)
+    else:
+        user_form = UserSettingsForm(
+            data=request.POST,
+            instance=request.user
+        )
+        profile_form = ProfileSettingsForm(
+            data=request.POST,
+            instance=request.user.profile,
+            user=request.user,
+            FILES=request.FILES
+        )
+        if user_form.is_valid() and profile_form.is_valid():
+            user = user_form.save()
+            profile_form.save()
+
+    context = {
+        'user_form': user_form,
+        'profile_form': profile_form,
+    }
     return render(request, 'settings.html', context)
 
 
-errors = ['Incorrect login', 'Wrong password']
-
-
 def login(request):
-    # Page for login in site
-    context['errors'] = errors
+    # Page for login on site
+    if request.GET.get('next'):
+        next_url = request.GET.get('next')
+    elif request.session.get('next'):
+        next_url = request.session.get('next')
+    else:
+        next_url = ''
+
+    if request.method == 'GET':
+        form = LoginForm()
+    else:
+        form = LoginForm(data=request.POST)
+        if form.is_valid():
+            user = auth.authenticate(request, **form.cleaned_data)
+            if user is not None:
+                auth.login(request, user)
+                if next_url != '':
+                    return redirect(next_url)
+                else:
+                    return redirect(reverse('home'))
+
+    if request.session.get('next') != next_url:
+        request.session['next'] = next_url
+
+    context = {
+        'form': form,
+    }
     return render(request, 'login.html', context)
+
+@login_required
+def logout(request):
+    auth.logout(request)
+    if 'next' in request.GET:
+        return redirect(request.GET['next'])
+    else:
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 def register(request):
     # Page for registration
-    return render(request, 'register.html', context)
+    if request.user.is_authenticated:
+        raise Http404
+    if request.method == 'POST':
+        form = RegistrationForm(data=request.POST, FILES=request.FILES)
+        if form.is_valid():
+            user = form.save()
+            raw_password = form.cleaned_data.get('password1')
+            user = auth.authenticate(
+                username=user.username,
+                password=raw_password
+            )
+            if user is not None:
+                auth.login(request, user)
+            else:
+                return redirect(reverse('signup'))
+            return redirect(reverse('home'))
+    else:
+        form = RegistrationForm()
+    return render(request, 'register.html', {'form': form})

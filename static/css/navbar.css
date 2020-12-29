@@ -5,3 +5,13 @@ ul.navbar-nav {
 .dropdown-item {
     color: aliceblue;
 }
+
+#avatar {
+    height: 40px;
+    border-radius: 50%;
+}
+
+#logo {
+    height: 40px;
+    border-radius: 10px;
+}

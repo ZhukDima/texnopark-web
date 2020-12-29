@@ -2,7 +2,11 @@
 <div class="card mb-3 question">
     <div class="row no-gutters">
         <div class="col-md-4">
-            <img src="{% static 'img/avatar.jpg' %}" class="card-img" alt="...">
+            {% if q.author.profile.avatar %}
+            <img src="{{ q.author.profile.avatar.url }}" class="card-img" alt="#">
+            {% else %}
+            <img src="{% static 'img/avatar.jpg' %}" alt="#" class="card-img">
+            {% endif %}
             <div class="row scores">
 
                 <div class="post-score align-self-center">
@@ -32,13 +36,13 @@
                 <p class="card-text question-text">
                     {{ q.text }}
                 </p>
-                <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                <p class="card-text"><small class="text-muted">Created at {{ q.date_create }}</small></p>
             </div>
 
             <div class="row d-flex flex-row justify-content-around px-3 px-md-5 pb-3">
                 <div class="col ans-link">
                     <a href="{% url 'answers' q.id %}" class="btn btn-outline-success">
-                        Answer (5)
+                        Answers
                     </a>
                 </div>
                 <div class="col d-flex flex-row">
@@ -47,8 +51,8 @@
                             <h5 class="mx-auto">Tags:</h5>
                         </div>
                         <div class="col d-flex flex-column flex-md-row">
-                            {% for t in q.tags %}
-                            <a class="mx-2" href="{% url 'tag' t %}">{{ t }}</a>
+                            {% for t in q.tags.all %}
+                            <a class="mx-2" href="{% url 'tag' t.tag %}">{{ t.tag }}</a>
                             {% endfor %}
                         </div>
                     </div>

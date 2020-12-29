@@ -4,14 +4,14 @@
     <hr>
     <ul>
         {% for t in all_tags %}
-        <li><a href="{% url 'tag' t %}" class="sidebar-link">{{ t }}</a></li>
+        <li><a href="{% url 'tag' t.tag %}" class="sidebar-link">{{ t.tag }}</a></li>
         {% endfor %}
     </ul>
     <h3 class="text-center">Best Members</h3>
     <hr>
     <ul>
-        {% for m in all_members %}
-        <li><a href="#" class="sidebar-link">{{ m }}</a></li>
+        {% for person in best_members %}
+        <li><a href="#" class="sidebar-link">{{ person.nickname }} | Score: {{ person.score }}</a></li>
         {% endfor %}
     </ul>
 </div>

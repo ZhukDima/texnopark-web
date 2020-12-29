@@ -3,7 +3,11 @@
 <div class="card mb-3 asnwer">
     <div class="row no-gutters">
         <div class="col-md-4">
-            <img src="{% static 'img/avatar.jpg' %}" class="card-img" alt="...">
+            {% if ans.author.profile.avatar %}
+            <img src="{{ ans.author.profile.avatar.url }}" class="card-img" alt="#">
+            {% else %}
+            <img src="{% static 'img/avatar.jpg' %}" alt="#" class="card-img">
+            {% endif %}
 
             <div class="row scores">
                 <div class="post-score align-self-center">
@@ -26,12 +30,18 @@
 
         </div>
         <div class="col">
-            <div class="card-body">
+            <div class="card-body" id="{{ ans.pk }}">
                 <a href="#">
-                    <h5 class="card-title">{{ ans.author }}</h5>
+                    <h5 class="card-title">{{ ans.author.profile.nickname }}</h5>
                 </a>
                 <p class="card-text question-text">{{ ans.text }}</p>
-                <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                <p class="card-text"><small class="text-muted">
+                    {% if ans.date_create != ans.last_modified %}
+                    Last updated {{ ans.last_modified }}
+                    {% else %}
+                    Created at {{ ans.date_create }}
+                    {% endif %}
+                </small></p>
             </div>
 
             <div class="row d-flex flex-row justify-content-around px-5">

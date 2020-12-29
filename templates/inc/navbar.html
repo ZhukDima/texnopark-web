@@ -1,3 +1,5 @@
+{% load static %}
+
 <nav class="navbar navbar-expand-md navbar-dark bg-info">
     <a class="navbar-brand mb-0 h1" href="{% url 'home' %}">AskZhuk
 
@@ -18,24 +20,31 @@
             <li class="nav-item mr-4">
                 <a href="{% url 'ask' %}" class="btn btn-success">ASK!</a>
             </li>
-            
 
-
+            {% if user.is_authenticated %}
+            <li class="nav-item">
+                <img id="avatar" src="{% if user.profile.avatar %} 
+                {{ user.profile.avatar.url }}
+                {% else %}
+                {% static 'img/avatar.jpg' %}
+                {% endif %}" alt="{{ user.profile.nickname }}">
+            </li>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false">
-                    User
+                    {{ user.profile.nickname }}
                 </a>
-                <div class="dropdown-menu bg-info" aria-labelledby="navbarDropdown">
-                    {% if True %}
+                <div class="dropdown-menu bg-dark" aria-labelledby="navbarDropdown">
                     <a class="dropdown-item" href="{% url 'settings' %}">Settings</a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#">Log Out</a>
-                    {% else %}
-                    <a class="dropdown-item" href="{% url 'login' %}">Login</a>
-                    {% endif %}
+                    <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
                 </div>
             </li>
+            {% else %}
+            <li class="nav-item">
+                <a class="btn btn-info" href="{% url 'login' %}">Login</a>
+            </li>
+            {% endif %}
 
         </ul>
     </div>

@@ -1,6 +1,7 @@
 {% extends 'inc/base.html' %}
 
 {% load static %}
+{% load bootstrap4 %}
 
 {% block page_title %}
 Ask Question
@@ -15,35 +16,14 @@ Ask Question
 
 <div class="question">
     <h1 class="text-center">New Question</h1>
-    <form action="#" method="POST">
-        <div class="form-group">
-            <label for="question_title">Title</label>
-            <input type="text" class="form-control" id="question_title"
-                placeholder="Write the short version of your question">
-        </div>
-        <div class="form-group">
-            <label for="question-body">Question</label>
-            <textarea class="form-control" name="question-body" id="question-body" rows="10"
-                placeholder="Ask something..."></textarea>
-        </div>
-        <div class="form-group">
-            <label for="question-tags">Tags</label>
-            {% for t in tags %}
-            <div class="form-check" id="question-tags">
-                <input class="form-check-input" type="checkbox" value="{{ t }}" id="{{ t }}">
-                <label class="form-check-label" for="{{ t }}">
-                    {{ t }}
-                </label>
-            </div>
-            {% endfor %}
-            <!-- <select name="tags" id="question-tags" class="form-control">
-                <option value="" selected disabled><span>Choose tags</span></option>
-                {% for t in tags %}
-                <option value="{{ t }}">{{ t }}</option>
-                {% endfor %}
-            </select> -->
-        </div>
-        <button type="submit" class="btn btn-success">Ask!</button>
+    <form action="{% url 'ask' %}" method="POST" class="form" novalidate>
+        {% csrf_token %}
+
+        {% bootstrap_form form %}
+
+        {% buttons %}
+        <button type="submit" class="btn btn-primary">Ask!</button>
+        {% endbuttons %}
     </form>
 </div>
 
